@@ -123,9 +123,7 @@ def dibujargrid():
     for j in range(0,591,118):
         cvs_img.create_line(0,j,1060,j)
 
-def coords(num_act:int):
 
-    pass
 
 #vars
 ruta_carpeta="" #global para ruta carpeta
@@ -142,6 +140,7 @@ def fuego_click():
     #descriptores (obtencion)
     img_tratar=load(ruta_foto_act)
     matr_img=img_tratar[4:2,3:2]
+
     #(escribir datos obtenidos)
 #    f=open(txt_dest.get(), "w")
 #    f.close()
@@ -263,7 +262,9 @@ cvs_img.place(x=3, y=5)
 
 ######### IMAGENES A RECIBIR: 1060x590###########
 
-abrcrp=Button(text="Abrir carpeta", width=10, command=abrir_click, state="disabled")
+
+####TODO AÑADIR STATE="DISABLED AL TERMINAR LAS PRUEBAS"
+abrcrp=Button(text="Abrir carpeta", width=10, command=abrir_click)
 abrcrp.place(x=1150, y=10)
 
 detener=Button(text="Detener", width=10, bg="red", fg="white", command=salir)
