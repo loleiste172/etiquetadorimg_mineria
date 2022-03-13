@@ -1,3 +1,10 @@
+###############   ARCHIVO DE PRUEBA PERSONAL, IGNORAR
+###############   ARCHIVO DE PRUEBA PERSONAL, IGNORAR
+###############   ARCHIVO DE PRUEBA PERSONAL, IGNORAR
+###############   ARCHIVO DE PRUEBA PERSONAL, IGNORAR
+###############   ARCHIVO DE PRUEBA PERSONAL, IGNORAR
+###############   ARCHIVO DE PRUEBA PERSONAL, IGNORAR
+
 from math import floor
 import numpy as np
 import os
