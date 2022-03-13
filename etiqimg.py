@@ -136,16 +136,23 @@ lista_fotos=[] #global para los contenidos de la carpeta seleccionada
 
 #funcion para ejecutarse al dar click a fuego
 def fuego_click():
+    global contadorceldas #numero del la ubicacion del cuadro verde
     txt_pasado.config(text="fuego")
     #descriptores (obtencion)
     img_tratar=load(ruta_foto_act)
-    matr_img=img_tratar[4:2,3:2]
+    #recort=ubicaciones(contadorceldas)
 
+    #matr_img=img_tratar[recort[0]:recort[1],recort[2]:recort[3]]
+
+    #promr=prom_matriz(matr_img,0)
+    #promg=prom_matriz(matr_img,1)
+    #promb=prom_matriz(matr_img,2)
     #(escribir datos obtenidos)
-#    f=open(txt_dest.get(), "w")
-#    f.close()
+    #f=open(txt_dest.get(), "w")
+    #f.write(str(promr)+","+str(promg)+","+str(promb))
+    #f.close()
     #fin descriptores
-    global contadorceldas #numero del la ubicacion del cuadro verde
+    
     contadorceldas=contadorceldas+1
     if(contadorceldas>=25):
         contadorceldas=0
