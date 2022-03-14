@@ -11,6 +11,61 @@ from PIL import Image
 from PIL import ImageTk
 import imutils
 
+## Funcion para obtener la desviacion estandar de un conjunto de datos
+def desviacion():
+    #creamos una matriz para saber la posicion del cuadro seleccionado EJEMPLO los cuadros van del 0 al 24, si se selecciona el 24 estas en la pocicion 5,5 
+    lugares=[[1,1],[2,1],[3,1],[4,1],[5,1],[1,2],[2,2],[3,2],[4,2],[5,2],[1,3],[2,3],[3,3],[4,3],[5,3],[1,4],[2,4],[3,4],[4,4],[5,4],[1,5],[2,5],[3,5],[4,5],[5,5]]
+    lugar = lugares[contadorceldas]
+    lugx = lugar[0]
+    lugy = lugar[1]
+    print(lugx)
+    print(lugy)
+    #calculando desviacion estandar de R
+    #Obtenemos las dimensiones de la imagen original
+    tamOiginal = imgOriginal.size/3
+    anchoOriginal = int(imgOriginal.shape[1])
+    alturaOriginal = int(imgOriginal.shape[0])
+    
+    #calculamos cuanto vale cada particion
+    x = int(anchoOriginal/5)
+    y = int(alturaOriginal/5)
+
+    #Creamos la matriz vacia y un auxiliar para llenarla
+    #La matrizR se llenara de una lista de listas
+    matrizR = []
+    #La matrizlineal es el valor de todos los pixeles pero en una sola lista, ya que las funciones de desviacion estandar predefinida solo acepta las listas asi
+    matrizRLineal = []
+    aux = []
+    #este ciclo nos ayuda a llenar dos matrices, una de manera lineal y otra de manera de matriz
+    #sabemos que la pocicion de los pixeles esta dado por filas y columnas empezando del 0
+    #EL primer ciclo recorre las filas (Y) EJEMPLO la altura de tu imagen es de 500 pixeles, entonces se dividio entre 5, cada particion contiene 100 pixeles
+    #si estamos en la posicion (1,1) de nuestra particion entonces el rango de Y es del 0 al 99, si estamos en la posicion (1,2) entonces el rango de Y es del 100 al 199
+    #NOTA: LA FUNCION RANGE EMPIEZA DESDE EL CERO AL NUMERO ANTERIOR ESPECIFICADO
+    for fila in range(0+(y*(lugy-1)),y*lugy):
+        #El segundo cilo aplica la misma teoria solo que para el eje X (las columnas)
+        for columna in range(0+(x*(lugx-1)),x*lugx):
+            aux.append(int(imgOriginal[fila][columna][0]))
+            matrizRLineal.append(int(imgOriginal[fila][columna][0]))
+        matrizR.append(aux)
+        aux = []
+
+    #calculamos la media de manera manual
+    elementos = 0
+    sumatoria = 0
+    for fila in matrizR:
+        for elemento in fila:
+            sumatoria += elemento
+            elementos += 1
+
+    #mediaR = sumatoria / elementos
+
+    #calculamos la media y desviacion estandar con las funciones predefinidas
+    global desEstandar
+    global mediaR
+    desEstandar = np.std(matrizRLineal)
+    mediaR = np.mean(matrizRLineal)
+    print(mediaR)
+    print(desEstandar)
 
 
 
@@ -41,6 +96,10 @@ def updcuadrado():
 def load(ruta:str):
     if(len(ruta)>0):
         img = cv2.imread(ruta)
+        #creando una variable global de la imagen original
+        global imgOriginal
+        imgOriginal = cv2.imread(ruta)
+        imgOriginal = cv2.cvtColor(imgOriginal, cv2.COLOR_BGR2RGB)
         #img=imutils.resize(img, height=180)
         img=cv2.resize(img, (1060,590))
         #img=imutils.resize(img, width=280)
@@ -171,11 +230,16 @@ def fuego_click():
 def humo_click():
     txt_pasado.config(text="humo")
     #descriptores
-
+    #llamando a la funcion de desviacion estandar
+    desviacion()
     
-    #(escribir datos obtenidos)
-#    f=open(txt_dest.get(), "w")
-#    f.close()
+    #(escribir datos obtenidos) es "a" ya que con eso me permite agregar informacion sin eliminar lo que ya tenia
+    f=open(txt_dest.get(), "a")
+    try:
+        # Procesamiento para escribir en el fichero
+        f.write( str(mediaR) + ',' + str(desEstandar) + ', Humo' + '\n')
+    finally:
+        f.close()
 
     #fin descriptores
     global contadorceldas
