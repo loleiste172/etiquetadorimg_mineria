@@ -124,10 +124,26 @@ def prom_matriz(matriz,dimension):
 #devuelve una matriz: [0]: x minimo, [1]: x maximo, [2] y minimo, [3] y maximo
 def ubicaciones(num_act:int):
     ubics=[]
-    matriz_eleccion=[
-        [0,118,236,354,472,590],
-        [0,212,424,636,848,1060]
-    ]
+    m_alto=int(imgOriginal.shape[0])/5
+    m_ancho=int(imgOriginal.shape[1])/5
+    listax=[0]
+    listay=[0]
+
+    for al in range(6):
+        aux=0
+        aux=m_alto*al
+        listay.append(aux)
+
+    for an in range(6):
+        aux2=0
+        aux2=m_ancho*an
+        listax.append(aux2)
+
+    matriz_eleccion=[]
+
+    matriz_eleccion.append(listay)
+    matriz_eleccion.append(listax)
+
     real=num_act+1
     res=floor(real/5)
     resid=real%5
@@ -198,18 +214,22 @@ def fuego_click():
     global contadorceldas #numero del la ubicacion del cuadro verde
     txt_pasado.config(text="fuego")
     #descriptores (obtencion)
-    img_tratar=load(ruta_foto_act)
-    #recort=ubicaciones(contadorceldas)
 
-    #matr_img=img_tratar[recort[0]:recort[1],recort[2]:recort[3]]
+    recort=ubicaciones(contadorceldas)
+    #PARTICION DE IMAGEN,A PARTIR DE AHORA MATR_IMG TIENE LA PARTICION DE LA IMAGEN ORIGINAL SIN REDIMENSIONAR
+    matr_img=imgOriginal[int(recort[0]):int(recort[1]),int(recort[2]):int(recort[3])]
 
-    #promr=prom_matriz(matr_img,0)
-    #promg=prom_matriz(matr_img,1)
-    #promb=prom_matriz(matr_img,2)
+    #OBTENCION DE PROMEDIO
+    promr=prom_matriz(matr_img,0)
+    promg=prom_matriz(matr_img,1)
+    promb=prom_matriz(matr_img,2)
+
+
+
     #(escribir datos obtenidos)
-    #f=open(txt_dest.get(), "w")
-    #f.write(str(promr)+","+str(promg)+","+str(promb))
-    #f.close()
+    f=open(txt_dest.get(), "a")
+    f.write(str(promr)+","+str(promg)+","+str(promb)+",fuego")
+    f.close()
     #fin descriptores
     
     contadorceldas=contadorceldas+1

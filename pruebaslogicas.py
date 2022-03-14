@@ -8,6 +8,18 @@
 from math import floor
 import numpy as np
 import os
+import cv2
+import numpy as np
+#img=cv2.imread("C:/Users/j_lal/Desktop/imgprueba/Proyecto.png")
+def load(ruta:str):
+    img = cv2.imread(ruta)
+    #img=imutils.resize(img, height=180)
+    img=cv2.resize(img, (1062,594))
+    #img=imutils.resize(img, width=280)
+    #Rearrang the color channel
+    b,g,r = cv2.split(img)
+    img = cv2.merge((r,g,b))
+    return img
 
 matriz3d=[
     [[0, 5, 6],
@@ -70,15 +82,21 @@ for i in a:
 
 
 
+i=load("C:/Users/j_lal/Desktop/imgprueba/Proyecto.png")
 
+e=i[50:520,180:520]
+
+cv2.imshow('logo',e)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
 #print(a[1:3, 4:7])
 
 #prueba=ubicaciones(8)
 
 #print("["+str(prueba[0])+":"+str(prueba[1])+","+str(prueba[2])+":"+str(prueba[3])+"]")
 
-ase=prom_matriz(matriz3d,2)
+#ase=prom_matriz(matriz3d,2)
 
-print(ase)
+#print(ase)
 
 

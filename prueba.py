@@ -14,8 +14,6 @@ import imutils
 # Load an color image
 
 
-
-
 def load(ruta:str):
     img = cv2.imread(ruta)
     #img=imutils.resize(img, height=180)
