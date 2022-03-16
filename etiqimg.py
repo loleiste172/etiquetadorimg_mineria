@@ -6,20 +6,23 @@ from tkinter import messagebox
 import tkinter
 from tkinter.filedialog import askdirectory, askopenfilename
 import cv2
+from matplotlib import image
 import numpy as np
 from PIL import Image
 from PIL import ImageTk
 import imutils
+from skimage.feature import graycomatrix, graycoprops
+import sys
+sys.path.insert(0, 'C:/Users/coco_/Desktop/semestre 6/Mineria de datos/PrimerParcial/etiquetadorimg_mineria')
+from funciones import pxmy_calc, glcm_contrast, glcm_stat_calc, glcm_correlation, glcm_homogeneity, glcm_energy, glcm_entropy, glcm_entropy_calc, get_glcms, quant_img  
 
-## Funcion para obtener la desviacion estandar de un conjunto de datos
-def desviacion():
+#Funcion para obtener la particion
+def particion(imagen,canal):
     #creamos una matriz para saber la posicion del cuadro seleccionado EJEMPLO los cuadros van del 0 al 24, si se selecciona el 24 estas en la pocicion 5,5 
     lugares=[[1,1],[2,1],[3,1],[4,1],[5,1],[1,2],[2,2],[3,2],[4,2],[5,2],[1,3],[2,3],[3,3],[4,3],[5,3],[1,4],[2,4],[3,4],[4,4],[5,4],[1,5],[2,5],[3,5],[4,5],[5,5]]
     lugar = lugares[contadorceldas]
     lugx = lugar[0]
     lugy = lugar[1]
-    print(lugx)
-    print(lugy)
     #calculando desviacion estandar de R
     #Obtenemos las dimensiones de la imagen original
     tamOiginal = imgOriginal.size/3
@@ -41,13 +44,39 @@ def desviacion():
     #EL primer ciclo recorre las filas (Y) EJEMPLO la altura de tu imagen es de 500 pixeles, entonces se dividio entre 5, cada particion contiene 100 pixeles
     #si estamos en la posicion (1,1) de nuestra particion entonces el rango de Y es del 0 al 99, si estamos en la posicion (1,2) entonces el rango de Y es del 100 al 199
     #NOTA: LA FUNCION RANGE EMPIEZA DESDE EL CERO AL NUMERO ANTERIOR ESPECIFICADO
-    for fila in range(0+(y*(lugy-1)),y*lugy):
+    if canal == 3:
+        imageGp = imagen[y*(lugy-1):y*lugy, x*(lugx-1):x*lugx]
+        return imageGp
+    else:
+        for fila in range(0+(y*(lugy-1)),y*lugy):
         #El segundo cilo aplica la misma teoria solo que para el eje X (las columnas)
-        for columna in range(0+(x*(lugx-1)),x*lugx):
-            aux.append(int(imgOriginal[fila][columna][0]))
-            matrizRLineal.append(int(imgOriginal[fila][columna][0]))
-        matrizR.append(aux)
-        aux = []
+            for columna in range(0+(x*(lugx-1)),x*lugx):
+                aux.append(int(imagen[fila][columna][canal]))
+                matrizRLineal.append(int(imagen[fila][columna][canal]))
+            matrizR.append(aux)
+            aux = []
+        return matrizR, matrizRLineal
+
+#Funcion para obtener una imagen en gris en cada particion
+def MCG():
+    imgGray = cv2.cvtColor(imgO,cv2.COLOR_BGR2GRAY)
+    imageGp = particion(imgGray, 3)
+    glcm_dict = get_glcms(imageGp, levels=256, dist = 1)
+    #glcm = graycomatrix(imageGp, distances=[1], angles=[0], levels=256, symmetric=True, normed=True) #corre = graycoprops(glcm, 'correlation')
+    correlacionH = glcm_correlation(glcm_dict, 256)
+    entropiaH = glcm_entropy(glcm_dict, 256)
+    energiaH = glcm_energy(glcm_dict, 256)
+    homogeneidadH = glcm_homogeneity(glcm_dict, 256)
+    contrasteH = glcm_contrast(glcm_dict, 256)
+    
+    return entropiaH, correlacionH, energiaH, homogeneidadH, contrasteH
+    #print("Correlacion de Haralick: " + str(correlacionH))
+    #print("Entropia de Haralick: " + str(entropiaH))
+
+## Funcion para obtener la desviacion estandar de un conjunto de datos
+def tendenciaCentral(canal):
+    #Mandamos a llamar el metodo para llenar nuestras dos variables
+    matrizR, matrizRLineal = particion(imgOriginal, canal)
 
     #calculamos la media de manera manual
     elementos = 0
@@ -60,12 +89,11 @@ def desviacion():
     #mediaR = sumatoria / elementos
 
     #calculamos la media y desviacion estandar con las funciones predefinidas
-    global desEstandar
-    global mediaR
+    #global desEstandar
+    #global mediaR
     desEstandar = np.std(matrizRLineal)
     mediaR = np.mean(matrizRLineal)
-    print(mediaR)
-    print(desEstandar)
+    return desEstandar, mediaR
 
 
 
@@ -99,6 +127,8 @@ def load(ruta:str):
         #creando una variable global de la imagen original
         global imgOriginal
         imgOriginal = cv2.imread(ruta)
+        global imgO 
+        imgO = cv2.imread(ruta)
         imgOriginal = cv2.cvtColor(imgOriginal, cv2.COLOR_BGR2RGB)
         #img=imutils.resize(img, height=180)
         img=cv2.resize(img, (1060,590))
@@ -246,18 +276,22 @@ def fuego_click():
         updcuadrado()
 
 
-#funcion del boton humo
+#funcion del boton humo############
 def humo_click():
     txt_pasado.config(text="humo")
     #descriptores
     #llamando a la funcion de desviacion estandar
-    desviacion()
+    desEstandarR, mediaR = tendenciaCentral(0)
+    desEstandarG, mediaG = tendenciaCentral(1)
+    desEstandarB, mediaB = tendenciaCentral(2)
+    entropia, correlacion, energia, homogeneidad, contraste = MCG()
+    #matrizCon = GLCM()
     
     #(escribir datos obtenidos) es "a" ya que con eso me permite agregar informacion sin eliminar lo que ya tenia
     f=open(txt_dest.get(), "a")
     try:
         # Procesamiento para escribir en el fichero
-        f.write( str(mediaR) + ',' + str(desEstandar) + ', Humo' + '\n')
+        f.write(str(mediaR) + ',' + str(desEstandarR) + ',' + str(mediaG) + ',' + str(desEstandarG) + ',' + str(mediaB) + ',' + str(desEstandarB) + ',' + str(entropia) + ',' + str(correlacion) + ',' + str(energia) + ',' + str(homogeneidad)+ ',' + str(contraste) + ', 0' + '\n')
     finally:
         f.close()
 
