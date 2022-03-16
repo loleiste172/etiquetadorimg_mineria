@@ -14,8 +14,7 @@ import imutils
 from skimage.feature import graycomatrix, graycoprops
 import sys
 sys.path.insert(0, 'C:/Users/coco_/Desktop/semestre 6/Mineria de datos/PrimerParcial/etiquetadorimg_mineria')
-from funciones import pxmy_calc, glcm_contrast, glcm_stat_calc, glcm_correlation, glcm_homogeneity, glcm_energy, glcm_entropy, glcm_entropy_calc, get_glcms, quant_img  
-
+from funciones import pxmy_calc, glcm_contrast, glcm_stat_calc, glcm_correlation, glcm_homogeneity, glcm_energy, glcm_entropy, glcm_entropy_calc, get_glcms, quant_img , glcm_diffentropy, glcm_asm
 #Funcion para obtener la particion
 def particion(imagen,canal):
     #creamos una matriz para saber la posicion del cuadro seleccionado EJEMPLO los cuadros van del 0 al 24, si se selecciona el 24 estas en la pocicion 5,5 
@@ -62,14 +61,25 @@ def MCG():
     imgGray = cv2.cvtColor(imgO,cv2.COLOR_BGR2GRAY)
     imageGp = particion(imgGray, 3)
     glcm_dict = get_glcms(imageGp, levels=256, dist = 1)
-    #glcm = graycomatrix(imageGp, distances=[1], angles=[0], levels=256, symmetric=True, normed=True) #corre = graycoprops(glcm, 'correlation')
-    correlacionH = glcm_correlation(glcm_dict, 256)
+    glcm0 = graycomatrix(imageGp, distances=[1], angles=[0], levels=256, symmetric=True, normed=True) 
+    glcm45 = graycomatrix(imageGp, distances=[1], angles=[45], levels=256, symmetric=True, normed=True) 
+    glcm90 = graycomatrix(imageGp, distances=[1], angles=[90], levels=256, symmetric=True, normed=True) 
+    glcm135 = graycomatrix(imageGp, distances=[1], angles=[135], levels=256, symmetric=True, normed=True) 
+    correlacionH2 = graycoprops(glcm0, 'correlation')
+    correlacionH2 += graycoprops(glcm45, 'correlation')
+    correlacionH2 += graycoprops(glcm90, 'correlation')
+    correlacionH2 += graycoprops(glcm135, 'correlation')
+
+    correlacionH22 = correlacionH2[0][0]/4
+    #correlacionH = glcm_correlation(glcm_dict, 256)
     entropiaH = glcm_entropy(glcm_dict, 256)
     energiaH = glcm_energy(glcm_dict, 256)
     homogeneidadH = glcm_homogeneity(glcm_dict, 256)
-    contrasteH = glcm_contrast(glcm_dict, 256)
+    amsH = glcm_asm(glcm_dict, 256)
+    #contrasteH = glcm_contrast(glcm_dict, 256)
+    #diffentropyH = glcm_diffentropy(glcm_dict, 256)
     
-    return entropiaH, correlacionH, energiaH, homogeneidadH, contrasteH
+    return entropiaH, correlacionH22, energiaH, homogeneidadH, amsH#contrasteH,  diffentropyH
     #print("Correlacion de Haralick: " + str(correlacionH))
     #print("Entropia de Haralick: " + str(entropiaH))
 
@@ -245,23 +255,36 @@ def fuego_click():
     txt_pasado.config(text="fuego")
     #descriptores (obtencion)
 
-    recort=ubicaciones(contadorceldas)
+    #recort=ubicaciones(contadorceldas)
     #PARTICION DE IMAGEN,A PARTIR DE AHORA MATR_IMG TIENE LA PARTICION DE LA IMAGEN ORIGINAL SIN REDIMENSIONAR
-    matr_img=imgOriginal[int(recort[0]):int(recort[1]),int(recort[2]):int(recort[3])]
+    #matr_img=imgOriginal[int(recort[0]):int(recort[1]),int(recort[2]):int(recort[3])]
 
     #OBTENCION DE PROMEDIO
-    promr=prom_matriz(matr_img,0)
-    promg=prom_matriz(matr_img,1)
-    promb=prom_matriz(matr_img,2)
+    #promr=prom_matriz(matr_img,0)
+    #promg=prom_matriz(matr_img,1)
+    #promb=prom_matriz(matr_img,2)
 
 
 
     #(escribir datos obtenidos)
-    f=open(txt_dest.get(), "a")
-    f.write(str(promr)+","+str(promg)+","+str(promb)+",fuego")
-    f.close()
+    #f=open(txt_dest.get(), "a")
+    #f.write(str(promr)+","+str(promg)+","+str(promb)+",fuego")
+    #f.close()
     #fin descriptores
+    desEstandarR, mediaR = tendenciaCentral(0)
+    desEstandarG, mediaG = tendenciaCentral(1)
+    desEstandarB, mediaB = tendenciaCentral(2)
+    entropia, correlacion, energia, homogeneidad, contraste = MCG()
+    #matrizCon = GLCM()
     
+    #(escribir datos obtenidos) es "a" ya que con eso me permite agregar informacion sin eliminar lo que ya tenia
+    f=open(txt_dest.get(), "a")
+    try:
+        # Procesamiento para escribir en el fichero
+        f.write(str(mediaR) + ',' + str(desEstandarR) + ',' + str(mediaG) + ',' + str(desEstandarG) + ',' + str(mediaB) + ',' + str(desEstandarB) + ',' + str(entropia) + ',' + str(correlacion) + ',' + str(energia) + ',' + str(homogeneidad)+ ',' + str(contraste) + ', 2' + '\n')
+    finally:
+        f.close()
+
     contadorceldas=contadorceldas+1
     if(contadorceldas>=25):
         contadorceldas=0
@@ -316,12 +339,39 @@ def nada_click():
     txt_pasado.config(text="no inc. / vacio")
     #descriptores
 
-
+    desEstandarR, mediaR = tendenciaCentral(0)
+    desEstandarG, mediaG = tendenciaCentral(1)
+    desEstandarB, mediaB = tendenciaCentral(2)
+    entropia, correlacion, energia, homogeneidad, asm = MCG()
+    #matrizCon = GLCM()
+    
+    #(escribir datos obtenidos) es "a" ya que con eso me permite agregar informacion sin eliminar lo que ya tenia
+    f=open(txt_dest.get(), "a")
+    try:
+        # Procesamiento para escribir en el fichero
+        f.write(str(mediaR) + ',' + str(desEstandarR) + ',' + str(mediaG) + ',' + str(desEstandarG) + ',' + str(mediaB) + ',' + str(desEstandarB) + ',' + str(entropia) + ',' + str(correlacion) + ',' + str(energia) + ',' + str(homogeneidad)+ ',' + str(asm) + ', 1' + '\n')
+    finally:
+        f.close()
     
     #(escribir datos obtenidos)
 #    f=open(txt_dest.get(), "w")
 #    f.close()
     #fin descriptores
+    global contadorceldas
+    contadorceldas=contadorceldas+1
+    if(contadorceldas>=25):
+        contadorceldas=0
+        num_actual=int(pant_cont.get())
+        num_actual=num_actual+1
+        pant_cont.delete(0, 'end')
+        pant_cont.insert(0, num_actual)
+        nruta=updruta()
+        actualizar(nruta)
+        cvs_img.move(cuadradoselec, -848, -472)
+    else:
+        updcuadrado()
+
+def descartar_click():
     global contadorceldas
     contadorceldas=contadorceldas+1
     if(contadorceldas>=25):
@@ -413,7 +463,8 @@ txt_pasado.place(x=1155, y=270)
 
 btn_fuego=Button(text="Fuego", width=10, bg="orange", fg="white", command=fuego_click).place(x=1150, y=350)
 btn_humo=Button(text="Humo", width=10, bg="gray", fg="white", command=humo_click).place(x=1150, y=390)
-btn_nada=Button(text="Vacio/NS", width=10, command=nada_click).place(x=1150, y=430)
-btn_deshacer=Button(text="Deshacer", width=10, bg="#FF5733", command=deshacer).place(x=1150, y=490)
+btn_nada=Button(text="No fuego", bg="green", width=10, command=nada_click).place(x=1150, y=430)
+btn_nada=Button(text="Descartar", width=10, command=descartar_click).place(x=1150, y=470)
+btn_deshacer=Button(text="Deshacer", width=10, bg="#FF5733", command=deshacer).place(x=1150, y=510)
 
 raiz.mainloop()

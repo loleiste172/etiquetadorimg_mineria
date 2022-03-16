@@ -41,14 +41,14 @@ def glcm_contrast(glcms_dict, ngl):
     # Initialize features list
     contrast_list = []
     # Iterate across glcms
-    for key in glcms_dict:
-        glcm = glcms_dict[key]
-        n_glcm = glcm / np.sum(glcm)
-        contrast = 0
-        # Iterate across k, call pxmy_calc
-        for k in range(0, ngl-1):
-            contrast += (k**2) * pxmy_calc(n_glcm, ngl, k)
-        contrast_list.append(contrast)
+    #for key in glcms_dict:
+    glcm = glcms_dict['P0']
+    n_glcm = glcm / np.sum(glcm)
+    contrast = 0
+    # Iterate across k, call pxmy_calc
+    for k in range(0, ngl-1):
+        contrast += (k**2) * pxmy_calc(n_glcm, ngl, k)
+    contrast_list.append(contrast)
     # Return average contrast value
     return np.mean(contrast_list)
 
@@ -241,4 +241,50 @@ def glcm_homogeneity(glcms_dict, ngl):
         homog_list.append(homog)
     # Return average homogeneity value
     return np.mean(homog_list)
-    
+
+
+
+def glcm_diffentropy(glcms_dict, ngl):
+    '''
+    Returns directionally-averaged Haralick difference entropy
+    Inputs  : glcms_dict (dict of directional matrices)
+    Ouputs  : mean of diffentropy_list
+    '''
+    # Initialize features list
+    diffentropy_list = []
+    # Iterate across glcms
+    #for key in glcms_dict:
+    glcm = glcms_dict['P0']
+    n_glcm = glcm / np.sum(glcm)
+    # Calculate sum entropy
+    diffentropy = 0
+    for k in range(0, ngl-1):
+        val = pxmy_calc(n_glcm, ngl, k)
+        if val == 0.0:
+            diffentropy += 0
+        else:
+            diffentropy -= val * np.log2(val)
+    diffentropy_list.append(diffentropy)
+    # Return average contrast value
+    return np.mean(diffentropy_list)
+
+def glcm_asm(glcms_dict, ngl):
+    '''
+    Returns directionally-averaged angular second moment (asm)
+    Inputs  : glcms_dict (dict of directional matrices)
+    Ouputs  : mean of asm_list
+    '''
+    # Initialize features list
+    asm_list = []
+    # Iterate across glcms
+    for key in glcms_dict:
+        glcm = glcms_dict[key]
+        n_glcm = glcm / np.sum(glcm)
+        asm = 0
+        # Iterate across i and j
+        for i in range(0, ngl-1):
+            for j in range(0, ngl-1):
+                asm += (n_glcm[i][j]) * (n_glcm[i][j])
+        asm_list.append(asm)
+    # Return average ASM value
+    return np.mean(asm_list)
