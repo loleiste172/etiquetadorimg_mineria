@@ -274,14 +274,14 @@ def fuego_click():
     desEstandarR, mediaR = tendenciaCentral(0)
     desEstandarG, mediaG = tendenciaCentral(1)
     desEstandarB, mediaB = tendenciaCentral(2)
-    entropia, correlacion, energia, homogeneidad, contraste = MCG()
+    entropia, correlacion, energia, homogeneidad, asm = MCG()
     #matrizCon = GLCM()
     
     #(escribir datos obtenidos) es "a" ya que con eso me permite agregar informacion sin eliminar lo que ya tenia
     f=open(txt_dest.get(), "a")
     try:
         # Procesamiento para escribir en el fichero
-        f.write(str(mediaR) + ',' + str(desEstandarR) + ',' + str(mediaG) + ',' + str(desEstandarG) + ',' + str(mediaB) + ',' + str(desEstandarB) + ',' + str(entropia) + ',' + str(correlacion) + ',' + str(energia) + ',' + str(homogeneidad)+ ',' + str(contraste) + ', 2' + '\n')
+        f.write(str(mediaR) + ',' + str(desEstandarR) + ',' + str(mediaG) + ',' + str(desEstandarG) + ',' + str(mediaB) + ',' + str(desEstandarB) + ',' + str(entropia) + ',' + str(correlacion) + ',' + str(energia) + ',' + str(homogeneidad)+ ',' + str(asm) + ', 2' + '\n')
     finally:
         f.close()
 
@@ -307,14 +307,14 @@ def humo_click():
     desEstandarR, mediaR = tendenciaCentral(0)
     desEstandarG, mediaG = tendenciaCentral(1)
     desEstandarB, mediaB = tendenciaCentral(2)
-    entropia, correlacion, energia, homogeneidad, contraste = MCG()
+    entropia, correlacion, energia, homogeneidad, asm = MCG()
     #matrizCon = GLCM()
     
     #(escribir datos obtenidos) es "a" ya que con eso me permite agregar informacion sin eliminar lo que ya tenia
     f=open(txt_dest.get(), "a")
     try:
         # Procesamiento para escribir en el fichero
-        f.write(str(mediaR) + ',' + str(desEstandarR) + ',' + str(mediaG) + ',' + str(desEstandarG) + ',' + str(mediaB) + ',' + str(desEstandarB) + ',' + str(entropia) + ',' + str(correlacion) + ',' + str(energia) + ',' + str(homogeneidad)+ ',' + str(contraste) + ', 0' + '\n')
+        f.write(str(mediaR) + ',' + str(desEstandarR) + ',' + str(mediaG) + ',' + str(desEstandarG) + ',' + str(mediaB) + ',' + str(desEstandarB) + ',' + str(entropia) + ',' + str(correlacion) + ',' + str(energia) + ',' + str(homogeneidad)+ ',' + str(asm) + ', 0' + '\n')
     finally:
         f.close()
 
