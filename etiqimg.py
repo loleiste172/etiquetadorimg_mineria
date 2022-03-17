@@ -251,7 +251,6 @@ lista_fotos=[] #global para los contenidos de la carpeta seleccionada
 
 #funcion para ejecutarse al dar click a fuego
 def fuego_click():
-    global caracteristicasRegistro
     global contadorceldas #numero del la ubicacion del cuadro verde
     txt_pasado.config(text="fuego")
     #descriptores (obtencion)
@@ -278,22 +277,16 @@ def fuego_click():
     entropia, correlacion, energia, homogeneidad, asm = MCG()
     #matrizCon = GLCM()
     
-    caracteristicasRegistro[contadorceldas]=[mediaR, desEstandarR, mediaG, desEstandarG, mediaB, desEstandarB, entropia, correlacion, energia, homogeneidad, asm, 1]
-    
-    #fin descriptores
-    
+    #(escribir datos obtenidos) es "a" ya que con eso me permite agregar informacion sin eliminar lo que ya tenia
+    f=open(txt_dest.get(), "a")
+    try:
+        # Procesamiento para escribir en el fichero
+        f.write(str(mediaR) + ',' + str(desEstandarR) + ',' + str(mediaG) + ',' + str(desEstandarG) + ',' + str(mediaB) + ',' + str(desEstandarB) + ',' + str(entropia) + ',' + str(correlacion) + ',' + str(energia) + ',' + str(homogeneidad)+ ',' + str(asm) + ', 2' + '\n')
+    finally:
+        f.close()
+
     contadorceldas=contadorceldas+1
     if(contadorceldas>=25):
-        #(escribir datos obtenidos) es "a" ya que con eso me permite agregar informacion sin eliminar lo que ya tenia
-        f=open(txt_dest.get(), "a")
-        try:
-            # Procesamiento para escribir en el fichero
-            for i in range(0, contadorceldas):
-                if caracteristicasRegistro[i][0] != 0:
-                    f.write(str(caracteristicasRegistro[i][0]) + ',' + str(caracteristicasRegistro[i][1]) + ',' + str(caracteristicasRegistro[i][2]) + ',' + str(caracteristicasRegistro[i][3]) + ',' + str(caracteristicasRegistro[i][4]) + ',' + str(caracteristicasRegistro[i][5]) + ',' + str(caracteristicasRegistro[i][6]) + ',' + str(caracteristicasRegistro[i][7]) + ',' + str(caracteristicasRegistro[i][8]) + ',' + str(caracteristicasRegistro[i][9])+ ',' + str(caracteristicasRegistro[i][10]) + ','+ str(caracteristicasRegistro[i][11]) + '\n')
-        finally:
-            f.close()
-        caracteristicasRegistro = [[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0]]
         contadorceldas=0
         num_actual=int(pant_cont.get())
         num_actual=num_actual+1
@@ -308,8 +301,6 @@ def fuego_click():
 
 #funcion del boton humo############
 def humo_click():
-    global caracteristicasRegistro
-    global contadorceldas
     txt_pasado.config(text="humo")
     #descriptores
     #llamando a la funcion de desviacion estandar
@@ -318,22 +309,19 @@ def humo_click():
     desEstandarB, mediaB = tendenciaCentral(2)
     entropia, correlacion, energia, homogeneidad, asm = MCG()
     #matrizCon = GLCM()
-    caracteristicasRegistro[contadorceldas]=[mediaR, desEstandarR, mediaG, desEstandarG, mediaB, desEstandarB, entropia, correlacion, energia, homogeneidad, asm, '0']
     
+    #(escribir datos obtenidos) es "a" ya que con eso me permite agregar informacion sin eliminar lo que ya tenia
+    f=open(txt_dest.get(), "a")
+    try:
+        # Procesamiento para escribir en el fichero
+        f.write(str(mediaR) + ',' + str(desEstandarR) + ',' + str(mediaG) + ',' + str(desEstandarG) + ',' + str(mediaB) + ',' + str(desEstandarB) + ',' + str(entropia) + ',' + str(correlacion) + ',' + str(energia) + ',' + str(homogeneidad)+ ',' + str(asm) + ', 0' + '\n')
+    finally:
+        f.close()
+
     #fin descriptores
-    
+    global contadorceldas
     contadorceldas=contadorceldas+1
     if(contadorceldas>=25):
-        #(escribir datos obtenidos) es "a" ya que con eso me permite agregar informacion sin eliminar lo que ya tenia
-        f=open(txt_dest.get(), "a")
-        try:
-            # Procesamiento para escribir en el fichero
-            for i in range(0, contadorceldas):
-                if caracteristicasRegistro[i][0] != 0:
-                    f.write(str(caracteristicasRegistro[i][0]) + ',' + str(caracteristicasRegistro[i][1]) + ',' + str(caracteristicasRegistro[i][2]) + ',' + str(caracteristicasRegistro[i][3]) + ',' + str(caracteristicasRegistro[i][4]) + ',' + str(caracteristicasRegistro[i][5]) + ',' + str(caracteristicasRegistro[i][6]) + ',' + str(caracteristicasRegistro[i][7]) + ',' + str(caracteristicasRegistro[i][8]) + ',' + str(caracteristicasRegistro[i][9])+ ',' + str(caracteristicasRegistro[i][10]) + ','+ str(caracteristicasRegistro[i][11]) + '\n')
-        finally:
-            f.close()
-        caracteristicasRegistro = [[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0]]
         contadorceldas=0
         num_actual=int(pant_cont.get())
         num_actual=num_actual+1
@@ -348,8 +336,6 @@ def humo_click():
 
 #funcion al dar click al boton nada
 def nada_click():
-    global caracteristicasRegistro
-    global contadorceldas
     txt_pasado.config(text="no inc. / vacio")
     #descriptores
 
@@ -359,22 +345,21 @@ def nada_click():
     entropia, correlacion, energia, homogeneidad, asm = MCG()
     #matrizCon = GLCM()
     
-    caracteristicasRegistro[contadorceldas]=[mediaR, desEstandarR, mediaG, desEstandarG, mediaB, desEstandarB, entropia, correlacion, energia, homogeneidad, asm, 2]
+    #(escribir datos obtenidos) es "a" ya que con eso me permite agregar informacion sin eliminar lo que ya tenia
+    f=open(txt_dest.get(), "a")
+    try:
+        # Procesamiento para escribir en el fichero
+        f.write(str(mediaR) + ',' + str(desEstandarR) + ',' + str(mediaG) + ',' + str(desEstandarG) + ',' + str(mediaB) + ',' + str(desEstandarB) + ',' + str(entropia) + ',' + str(correlacion) + ',' + str(energia) + ',' + str(homogeneidad)+ ',' + str(asm) + ', 1' + '\n')
+    finally:
+        f.close()
     
+    #(escribir datos obtenidos)
+#    f=open(txt_dest.get(), "w")
+#    f.close()
     #fin descriptores
-    
+    global contadorceldas
     contadorceldas=contadorceldas+1
     if(contadorceldas>=25):
-        #(escribir datos obtenidos) es "a" ya que con eso me permite agregar informacion sin eliminar lo que ya tenia
-        f=open(txt_dest.get(), "a")
-        try:
-            # Procesamiento para escribir en el fichero
-            for i in range(0, contadorceldas):
-                if caracteristicasRegistro[i][0] != 0:
-                    f.write(str(caracteristicasRegistro[i][0]) + ',' + str(caracteristicasRegistro[i][1]) + ',' + str(caracteristicasRegistro[i][2]) + ',' + str(caracteristicasRegistro[i][3]) + ',' + str(caracteristicasRegistro[i][4]) + ',' + str(caracteristicasRegistro[i][5]) + ',' + str(caracteristicasRegistro[i][6]) + ',' + str(caracteristicasRegistro[i][7]) + ',' + str(caracteristicasRegistro[i][8]) + ',' + str(caracteristicasRegistro[i][9])+ ',' + str(caracteristicasRegistro[i][10]) + ','+ str(caracteristicasRegistro[i][11]) + '\n')
-        finally:
-            f.close()
-        caracteristicasRegistro = [[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0]]
         contadorceldas=0
         num_actual=int(pant_cont.get())
         num_actual=num_actual+1
@@ -387,20 +372,9 @@ def nada_click():
         updcuadrado()
 
 def descartar_click():
-    global caracteristicasRegistro
     global contadorceldas
     contadorceldas=contadorceldas+1
     if(contadorceldas>=25):
-        #(escribir datos obtenidos) es "a" ya que con eso me permite agregar informacion sin eliminar lo que ya tenia
-        f=open(txt_dest.get(), "a")
-        try:
-            # Procesamiento para escribir en el fichero
-            for i in range(0, contadorceldas):
-                if caracteristicasRegistro[i][0] != 0:
-                    f.write(str(caracteristicasRegistro[i][0]) + ',' + str(caracteristicasRegistro[i][1]) + ',' + str(caracteristicasRegistro[i][2]) + ',' + str(caracteristicasRegistro[i][3]) + ',' + str(caracteristicasRegistro[i][4]) + ',' + str(caracteristicasRegistro[i][5]) + ',' + str(caracteristicasRegistro[i][6]) + ',' + str(caracteristicasRegistro[i][7]) + ',' + str(caracteristicasRegistro[i][8]) + ',' + str(caracteristicasRegistro[i][9])+ ',' + str(caracteristicasRegistro[i][10]) + ','+ str(caracteristicasRegistro[i][11]) + '\n')
-        finally:
-            f.close()
-        caracteristicasRegistro = [[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0]]
         contadorceldas=0
         num_actual=int(pant_cont.get())
         num_actual=num_actual+1
@@ -445,13 +419,10 @@ def cambiar_click():
 #tki
 raiz=Tk()
 clear()
-global contadorceldas
 contadorceldas=0
 inicial=255*np.ones((590,1060), np.uint8)#imagen blanca para enseñar por defecto
 preim=Image.fromarray(inicial)
 posimg=ImageTk.PhotoImage(image=preim)
-
-caracteristicasRegistro = [[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0]]
 
 raiz.title("Etiquetador de imagenes V0.3")
 raiz.state("zoomed")
