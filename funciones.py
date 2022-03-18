@@ -41,16 +41,16 @@ def glcm_contrast(glcms_dict, ngl):
     # Initialize features list
     contrast_list = []
     # Iterate across glcms
-    #for key in glcms_dict:
-    glcm = glcms_dict['P0']
-    n_glcm = glcm / np.sum(glcm)
-    contrast = 0
-    # Iterate across k, call pxmy_calc
-    for k in range(0, ngl-1):
-        contrast += (k**2) * pxmy_calc(n_glcm, ngl, k)
-    contrast_list.append(contrast)
+    for key in glcms_dict:
+        glcm = glcms_dict[key]
+        n_glcm = glcm / np.sum(glcm)
+        contrast = 0
+        # Iterate across k, call pxmy_calc
+        for k in range(0, ngl-1):
+            contrast += (k**2) * pxmy_calc(n_glcm, ngl, k)
+        contrast_list.append(contrast)
     # Return average contrast value
-    return np.mean(contrast_list)
+    return contrast_list[0],contrast_list[1],contrast_list[2],contrast_list[3]
 
 def glcm_stat_calc(glcm, ngl):
     '''
@@ -196,7 +196,7 @@ def glcm_entropy(glcms_dict, ngl):
         n_glcm = glcm / np.sum(glcm)
         entropy_list.append(glcm_entropy_calc(n_glcm, ngl))
     # Return average entropy value
-    return np.mean(entropy_list)
+    return entropy_list[0], entropy_list[1], entropy_list[2], entropy_list[3]
 
 def glcm_energy(glcms_dict, ngl):
     '''
@@ -217,7 +217,7 @@ def glcm_energy(glcms_dict, ngl):
                 asm += (n_glcm[i][j]) * (n_glcm[i][j])
         energy_list.append(np.sqrt(asm))
     # Return average ASM value
-    return np.mean(energy_list)
+    return energy_list[0],energy_list[1],energy_list[2],energy_list[3]
 
     
 def glcm_homogeneity(glcms_dict, ngl):
@@ -240,7 +240,7 @@ def glcm_homogeneity(glcms_dict, ngl):
                 homog += front * n_glcm[i][j]
         homog_list.append(homog)
     # Return average homogeneity value
-    return np.mean(homog_list)
+    return homog_list[0],homog_list[1],homog_list[2],homog_list[3]
 
 
 
@@ -287,4 +287,28 @@ def glcm_asm(glcms_dict, ngl):
                 asm += (n_glcm[i][j]) * (n_glcm[i][j])
         asm_list.append(asm)
     # Return average ASM value
-    return np.mean(asm_list)
+    return asm_list[0],asm_list[1],asm_list[2],asm_list[3]
+
+def glcm_variance(glcms_dict, ngl):
+    '''
+    Returns directionally-averaged Haralick variance
+    Inputs  : glcms_dict (dict of directional matrices)
+    Ouputs  : mean of var_list
+    '''
+    # Initialize features list
+    var_list = []
+    # Iterate across glcms
+    for key in glcms_dict:
+        glcm = glcms_dict[key]
+        n_glcm = glcm / np.sum(glcm)
+        # Get means and standard devs wrt x and y
+        meanx, meany, _stdx, _stdy = glcm_stat_calc(n_glcm, ngl)
+        meanxy = (meanx + meany) / 2.0
+        # Calculate correlation
+        var = 0
+        for i in range(0, ngl-1):
+            for j in range(0, ngl-1):
+                var += ((i - meanxy)**2 * n_glcm[i][j])
+        var_list.append(var)
+    # Return average entropy value
+    return np.mean(var_list)

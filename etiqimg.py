@@ -14,7 +14,7 @@ import imutils
 from skimage.feature import graycomatrix, graycoprops
 import sys
 sys.path.insert(0, 'C:/Users/coco_/Desktop/semestre 6/Mineria de datos/PrimerParcial/etiquetadorimg_mineria')
-from funciones import pxmy_calc, glcm_contrast, glcm_stat_calc, glcm_correlation, glcm_homogeneity, glcm_energy, glcm_entropy, glcm_entropy_calc, get_glcms, quant_img , glcm_diffentropy, glcm_asm
+from funciones import pxmy_calc, glcm_contrast, glcm_stat_calc, glcm_correlation, glcm_homogeneity, glcm_energy, glcm_entropy, glcm_entropy_calc, get_glcms, quant_img , glcm_diffentropy, glcm_asm,  glcm_variance
 #Funcion para obtener la particion
 def particion(imagen,canal):
     #creamos una matriz para saber la posicion del cuadro seleccionado EJEMPLO los cuadros van del 0 al 24, si se selecciona el 24 estas en la pocicion 5,5 
@@ -58,28 +58,51 @@ def particion(imagen,canal):
 
 #Funcion para obtener una imagen en gris en cada particion
 def MCG():
+    #0-Entropia0, 1-Entropia45, 2-Entropia90, 3-Entropia135, 4-correlacion0, 5-correlacion45, 6-correlacion90, 7-correlacion135, 8-Energia0, 9-Energia45, 10-Energia90, 11-Energia135
+    # 12-homogeneidad0, 13-homogeneidad45, 14-homogeneidad90, 15-homogeneidad135, 16-asm0, 17-asm45, 18-asm90, 19-asm135, 20-contraste, 21-contraste, 22-contraste, 23-contraste, 24-27 disimilitud
+    datos = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     imgGray = cv2.cvtColor(imgO,cv2.COLOR_BGR2GRAY)
     imageGp = particion(imgGray, 3)
-    glcm_dict = get_glcms(imageGp, levels=256, dist = 1)
-    glcm0 = graycomatrix(imageGp, distances=[1], angles=[0], levels=256, symmetric=True, normed=True) 
-    glcm45 = graycomatrix(imageGp, distances=[1], angles=[45], levels=256, symmetric=True, normed=True) 
-    glcm90 = graycomatrix(imageGp, distances=[1], angles=[90], levels=256, symmetric=True, normed=True) 
-    glcm135 = graycomatrix(imageGp, distances=[1], angles=[135], levels=256, symmetric=True, normed=True) 
-    correlacionH2 = graycoprops(glcm0, 'correlation')
-    correlacionH2 += graycoprops(glcm45, 'correlation')
-    correlacionH2 += graycoprops(glcm90, 'correlation')
-    correlacionH2 += graycoprops(glcm135, 'correlation')
+    glcm_dict = get_glcms(imageGp, levels=256, dist = 2)
+    #glcm_dictM = get_glcms(imageGp, levels=32, dist = 2)
+    glcm0 = graycomatrix(imageGp, distances=[2], angles=[0], levels=256, symmetric=True, normed=True) 
+    glcm45 = graycomatrix(imageGp, distances=[2], angles=[45], levels=256, symmetric=True, normed=True) 
+    glcm90 = graycomatrix(imageGp, distances=[2], angles=[90], levels=256, symmetric=True, normed=True) 
+    glcm135 = graycomatrix(imageGp, distances=[2], angles=[135], levels=256, symmetric=True, normed=True) 
+    datos[0],  datos[1],  datos[2],  datos[3]= glcm_entropy(glcm_dict, 256)
+    datos[4] = graycoprops(glcm0, 'correlation')[0][0]
+    datos[5] = graycoprops(glcm45, 'correlation')[0][0]
+    datos[6] = graycoprops(glcm90, 'correlation')[0][0]
+    datos[7] = graycoprops(glcm135, 'correlation')[0][0]
+    datos[8] = graycoprops(glcm0, 'energy')[0][0]
+    datos[9] = graycoprops(glcm45, 'energy')[0][0]
+    datos[10] = graycoprops(glcm90, 'energy')[0][0]
+    datos[11] = graycoprops(glcm135, 'energy')[0][0]
+    #datos[8],  datos[9],  datos[10],  datos[11] = glcm_energy(glcm_dict, 256)
+    datos[12] = graycoprops(glcm0, 'homogeneity')[0][0]
+    datos[13] = graycoprops(glcm45, 'homogeneity')[0][0]
+    datos[14] = graycoprops(glcm90, 'homogeneity')[0][0]
+    datos[15] = graycoprops(glcm135, 'homogeneity')[0][0]
+    #datos[12],  datos[13],  datos[14],  datos[15] = glcm_homogeneity(glcm_dict, 256)
+    datos[16] = graycoprops(glcm0, 'ASM')[0][0]
+    datos[17] = graycoprops(glcm45, 'ASM')[0][0]
+    datos[18] = graycoprops(glcm90, 'ASM')[0][0]
+    datos[19] = graycoprops(glcm135, 'ASM')[0][0]
+    #datos[16],  datos[17],  datos[18],  datos[19] = glcm_asm(glcm_dict, 256)
+    datos[20] = graycoprops(glcm0, 'contrast')[0][0]
+    datos[21] = graycoprops(glcm45, 'contrast')[0][0]
+    datos[22] = graycoprops(glcm90, 'contrast')[0][0]
+    datos[23] = graycoprops(glcm135, 'contrast')[0][0]
+    #datos[20],  datos[21],  datos[22],  datos[23] = glcm_contrast(glcm_dictM, 32)
+    datos[24] = graycoprops(glcm0, 'dissimilarity')[0][0]
+    datos[25] = graycoprops(glcm45, 'dissimilarity')[0][0]
+    datos[26] = graycoprops(glcm90, 'dissimilarity')[0][0]
+    datos[27] = graycoprops(glcm135, 'dissimilarity')[0][0]
 
-    correlacionH22 = correlacionH2[0][0]/4
-    #correlacionH = glcm_correlation(glcm_dict, 256)
-    entropiaH = glcm_entropy(glcm_dict, 256)
-    energiaH = glcm_energy(glcm_dict, 256)
-    homogeneidadH = glcm_homogeneity(glcm_dict, 256)
-    amsH = glcm_asm(glcm_dict, 256)
     #contrasteH = glcm_contrast(glcm_dict, 256)
     #diffentropyH = glcm_diffentropy(glcm_dict, 256)
     
-    return entropiaH, correlacionH22, energiaH, homogeneidadH, amsH#contrasteH,  diffentropyH
+    return datos
     #print("Correlacion de Haralick: " + str(correlacionH))
     #print("Entropia de Haralick: " + str(entropiaH))
 
@@ -274,14 +297,14 @@ def fuego_click():
     desEstandarR, mediaR = tendenciaCentral(0)
     desEstandarG, mediaG = tendenciaCentral(1)
     desEstandarB, mediaB = tendenciaCentral(2)
-    entropia, correlacion, energia, homogeneidad, asm = MCG()
+    descriptores = MCG()
     #matrizCon = GLCM()
     
     #(escribir datos obtenidos) es "a" ya que con eso me permite agregar informacion sin eliminar lo que ya tenia
     f=open(txt_dest.get(), "a")
     try:
         # Procesamiento para escribir en el fichero
-        f.write(str(mediaR) + ',' + str(desEstandarR) + ',' + str(mediaG) + ',' + str(desEstandarG) + ',' + str(mediaB) + ',' + str(desEstandarB) + ',' + str(entropia) + ',' + str(correlacion) + ',' + str(energia) + ',' + str(homogeneidad)+ ',' + str(asm) + ', 2' + '\n')
+        f.write(str(mediaR) + ',' + str(desEstandarR) + ',' + str(mediaG) + ',' + str(desEstandarG) + ',' + str(mediaB) + ',' + str(desEstandarB) + ',' + str(descriptores[0]) + ',' + str(descriptores[1]) + ',' + str(descriptores[2]) + ',' + str(descriptores[3]) + ',' + str(descriptores[4]) + ',' + str(descriptores[5]) + ',' + str(descriptores[6]) + ',' + str(descriptores[7]) + ',' + str(descriptores[8]) + ',' + str(descriptores[9]) + ',' + str(descriptores[10]) + ',' + str(descriptores[11]) + ',' + str(descriptores[12]) + ',' + str(descriptores[13]) + ',' + str(descriptores[14]) + ',' + str(descriptores[15]) + ',' + str(descriptores[16]) + ',' + str(descriptores[17]) + ',' + str(descriptores[18]) + ',' + str(descriptores[19])+ ',' + str(descriptores[20]) + ',' + str(descriptores[21]) + ',' + str(descriptores[22]) + ',' + str(descriptores[23]) + ',' + str(descriptores[24]) + ',' + str(descriptores[25]) + ',' + str(descriptores[26]) + ',' + str(descriptores[27])  + ', 1' + '\n')
     finally:
         f.close()
 
@@ -307,14 +330,14 @@ def humo_click():
     desEstandarR, mediaR = tendenciaCentral(0)
     desEstandarG, mediaG = tendenciaCentral(1)
     desEstandarB, mediaB = tendenciaCentral(2)
-    entropia, correlacion, energia, homogeneidad, asm = MCG()
+    descriptores = MCG()
     #matrizCon = GLCM()
     
     #(escribir datos obtenidos) es "a" ya que con eso me permite agregar informacion sin eliminar lo que ya tenia
     f=open(txt_dest.get(), "a")
     try:
         # Procesamiento para escribir en el fichero
-        f.write(str(mediaR) + ',' + str(desEstandarR) + ',' + str(mediaG) + ',' + str(desEstandarG) + ',' + str(mediaB) + ',' + str(desEstandarB) + ',' + str(entropia) + ',' + str(correlacion) + ',' + str(energia) + ',' + str(homogeneidad)+ ',' + str(asm) + ', 0' + '\n')
+        f.write(str(mediaR) + ',' + str(desEstandarR) + ',' + str(mediaG) + ',' + str(desEstandarG) + ',' + str(mediaB) + ',' + str(desEstandarB) + ',' + str(descriptores[0]) + ',' + str(descriptores[1]) + ',' + str(descriptores[2]) + ',' + str(descriptores[3]) + ',' + str(descriptores[4]) + ',' + str(descriptores[5]) + ',' + str(descriptores[6]) + ',' + str(descriptores[7]) + ',' + str(descriptores[8]) + ',' + str(descriptores[9]) + ',' + str(descriptores[10]) + ',' + str(descriptores[11]) + ',' + str(descriptores[12]) + ',' + str(descriptores[13]) + ',' + str(descriptores[14]) + ',' + str(descriptores[15]) + ',' + str(descriptores[16]) + ',' + str(descriptores[17]) + ',' + str(descriptores[18]) + ',' + str(descriptores[19])+ ',' + str(descriptores[20]) + ',' + str(descriptores[21]) + ',' + str(descriptores[22]) + ',' + str(descriptores[23])+ ',' + str(descriptores[24]) + ',' + str(descriptores[25]) + ',' + str(descriptores[26]) + ',' + str(descriptores[27])  + ', 0' + '\n')
     finally:
         f.close()
 
@@ -342,17 +365,17 @@ def nada_click():
     desEstandarR, mediaR = tendenciaCentral(0)
     desEstandarG, mediaG = tendenciaCentral(1)
     desEstandarB, mediaB = tendenciaCentral(2)
-    entropia, correlacion, energia, homogeneidad, asm = MCG()
+    descriptores = MCG()
     #matrizCon = GLCM()
     
     #(escribir datos obtenidos) es "a" ya que con eso me permite agregar informacion sin eliminar lo que ya tenia
     f=open(txt_dest.get(), "a")
     try:
         # Procesamiento para escribir en el fichero
-        f.write(str(mediaR) + ',' + str(desEstandarR) + ',' + str(mediaG) + ',' + str(desEstandarG) + ',' + str(mediaB) + ',' + str(desEstandarB) + ',' + str(entropia) + ',' + str(correlacion) + ',' + str(energia) + ',' + str(homogeneidad)+ ',' + str(asm) + ', 1' + '\n')
+        f.write(str(mediaR) + ',' + str(desEstandarR) + ',' + str(mediaG) + ',' + str(desEstandarG) + ',' + str(mediaB) + ',' + str(desEstandarB) + ',' + str(descriptores[0]) + ',' + str(descriptores[1]) + ',' + str(descriptores[2]) + ',' + str(descriptores[3]) + ',' + str(descriptores[4]) + ',' + str(descriptores[5]) + ',' + str(descriptores[6]) + ',' + str(descriptores[7]) + ',' + str(descriptores[8]) + ',' + str(descriptores[9]) + ',' + str(descriptores[10]) + ',' + str(descriptores[11]) + ',' + str(descriptores[12]) + ',' + str(descriptores[13]) + ',' + str(descriptores[14]) + ',' + str(descriptores[15]) + ',' + str(descriptores[16]) + ',' + str(descriptores[17]) + ',' + str(descriptores[18]) + ',' + str(descriptores[19])+ ',' + str(descriptores[20]) + ',' + str(descriptores[21]) + ',' + str(descriptores[22]) + ',' + str(descriptores[23])+ ',' + str(descriptores[24]) + ',' + str(descriptores[25]) + ',' + str(descriptores[26]) + ',' + str(descriptores[27])  + ', 2' + '\n')
     finally:
         f.close()
-    
+
     #(escribir datos obtenidos)
 #    f=open(txt_dest.get(), "w")
 #    f.close()
