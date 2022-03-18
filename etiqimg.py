@@ -462,7 +462,7 @@ cvs_img.place(x=3, y=5)
 
 
 ####TODO AÑADIR STATE="DISABLED AL TERMINAR LAS PRUEBAS"
-abrcrp=Button(text="Abrir carpeta", width=10, command=abrir_click)
+abrcrp=Button(text="Abrir carpeta", width=10, command=abrir_click, state='disabled')
 abrcrp.place(x=1150, y=10)
 
 detener=Button(text="Detener", width=10, bg="red", fg="white", command=salir)
