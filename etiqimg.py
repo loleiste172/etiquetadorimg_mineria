@@ -233,7 +233,11 @@ def actualizar(ruta:str):
 #funcion para actualizar la ruta actual de la foto
 def updruta():
     lista_fotos=os.listdir(ruta_carpeta)
-    ruta_act=ruta_carpeta+"/"+lista_fotos[int(pant_cont.get())]
+    try:
+        ruta_act=ruta_carpeta+"/"+lista_fotos[int(pant_cont.get())]
+    except:
+        messagebox.showerror(title="Fin de la carpeta", message="Has terminado con los contenidos de la carpeta, felicidades, puedes cerrar el programa y acceder a los contenidos de tu archivo destino")
+        return ruta_carpeta+"/"+lista_fotos[int(pant_cont.get()-1)]
     return ruta_act
 
 
@@ -456,7 +460,7 @@ inicial=255*np.ones((590,1060), np.uint8)#imagen blanca para enseñar por defect
 preim=Image.fromarray(inicial)
 posimg=ImageTk.PhotoImage(image=preim)
 
-raiz.title("Etiquetador de imagenes V0.3")
+raiz.title("Etiquetador de imagenes V1.0")
 raiz.state("zoomed")
 
 frm_img=Frame(raiz)#frame para el contenedor de la imagen
