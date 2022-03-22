@@ -18,7 +18,7 @@ from funciones import pxmy_calc, glcm_contrast, glcm_stat_calc, glcm_correlation
 #Funcion para obtener la particion
 def particion(imagen,canal):
     #creamos una matriz para saber la posicion del cuadro seleccionado EJEMPLO los cuadros van del 0 al 24, si se selecciona el 24 estas en la pocicion 5,5 
-    lugares=[[1,1],[2,1],[3,1],[4,1],[5,1],[1,2],[2,2],[3,2],[4,2],[5,2],[1,3],[2,3],[3,3],[4,3],[5,3],[1,4],[2,4],[3,4],[4,4],[5,4],[1,5],[2,5],[3,5],[4,5],[5,5]]
+    lugares=[[1,1],[2,1],[3,1],[4,1],[5,1],[6,1],[7,1],[8,1],[9,1],[1,2],[2,2],[3,2],[4,2],[5,2],[6,2],[7,2],[8,2],[9,2],[1,3],[2,3],[3,3],[4,3],[5,3],[6,3],[7,3],[8,3],[9,3], [1,4],[2,4],[3,4],[4,4],[5,4],[6,4],[7,4],[8,4],[9,4], [1,5],[2,5],[3,5],[4,5],[5,5],[6,5],[7,5],[8,5],[9,5], [1,6],[2,6],[3,6],[4,6],[5,6],[6,6],[7,6],[8,6],[9,6], [1,7],[2,7],[3,7],[4,7],[5,7],[6,7],[7,7],[8,7],[9,7], [1,8],[2,8],[3,8],[4,8],[5,8],[6,8],[7,8],[8,8],[9,8], [1,9],[2,9],[3,9],[4,9],[5,9],[6,9],[7,9],[8,9],[9,9]]
     lugar = lugares[contadorceldas]
     lugx = lugar[0]
     lugy = lugar[1]
@@ -29,8 +29,8 @@ def particion(imagen,canal):
     alturaOriginal = int(imgOriginal.shape[0])
     
     #calculamos cuanto vale cada particion
-    x = int(anchoOriginal/5)
-    y = int(alturaOriginal/5)
+    x = int(anchoOriginal/9)
+    y = int(alturaOriginal/8)
 
     #Creamos la matriz vacia y un auxiliar para llenarla
     #La matrizR se llenara de una lista de listas
@@ -146,12 +146,12 @@ def paso2(cosa):
 def updcuadrado():
     if(contadorceldas==0):
         global cuadradoselec
-        cuadradoselec=cvs_img.create_rectangle(0,0, 212, 118, outline="green", width=5)
+        cuadradoselec=cvs_img.create_rectangle(0,0, 118, 74, outline="green", width=5)
     else:
-        if(contadorceldas==5 or contadorceldas==10 or contadorceldas==15 or contadorceldas==20):
-            cvs_img.move(cuadradoselec, -848, 118)
+        if(contadorceldas==9 or contadorceldas==18 or contadorceldas==27 or contadorceldas==36 or contadorceldas==45 or contadorceldas==54 or contadorceldas==63 or contadorceldas==72):
+            cvs_img.move(cuadradoselec, -944, 74)
         else:
-            cvs_img.move(cuadradoselec, 212, 0)
+            cvs_img.move(cuadradoselec, 118, 0)
     
 #importante: convertir la imagen de una ruta a un string
 def load(ruta:str):
@@ -251,14 +251,15 @@ def abrir_click():
     actualizar(ruta_foto_act)
     dibujargrid()
     updcuadrado()
+    pant_cont["state"] = "disable"
 
 
 #funcion para dibujar grid
 def dibujargrid():
-    for i in range(0,1061,212):
+    for i in range(0,1061,118):
         cvs_img.create_line(i,0,i,590)
     
-    for j in range(0,591,118):
+    for j in range(0,591,74):
         cvs_img.create_line(0,j,1060,j)
 
 
@@ -309,7 +310,8 @@ def fuego_click():
         f.close()
 
     contadorceldas=contadorceldas+1
-    if(contadorceldas>=25):
+    if(contadorceldas>=72):
+        pant_cont["state"] = "normal"
         contadorceldas=0
         num_actual=int(pant_cont.get())
         num_actual=num_actual+1
@@ -317,7 +319,8 @@ def fuego_click():
         pant_cont.insert(0, num_actual)
         nruta=updruta()
         actualizar(nruta)
-        cvs_img.move(cuadradoselec, -848, -472)
+        cvs_img.move(cuadradoselec, -944, -518)
+        pant_cont["state"] = "disable"
     else:
         updcuadrado()
 
@@ -344,7 +347,8 @@ def humo_click():
     #fin descriptores
     global contadorceldas
     contadorceldas=contadorceldas+1
-    if(contadorceldas>=25):
+    if(contadorceldas>=72):
+        pant_cont["state"] = "normal"
         contadorceldas=0
         num_actual=int(pant_cont.get())
         num_actual=num_actual+1
@@ -352,7 +356,8 @@ def humo_click():
         pant_cont.insert(0, num_actual)
         nruta=updruta()
         actualizar(nruta)
-        cvs_img.move(cuadradoselec, -848, -472)
+        cvs_img.move(cuadradoselec, -944, -518)
+        pant_cont["state"] = "disable"
     else:
         updcuadrado()
 
@@ -382,7 +387,8 @@ def nada_click():
     #fin descriptores
     global contadorceldas
     contadorceldas=contadorceldas+1
-    if(contadorceldas>=25):
+    if(contadorceldas>=72):
+        pant_cont["state"] = "normal"
         contadorceldas=0
         num_actual=int(pant_cont.get())
         num_actual=num_actual+1
@@ -390,14 +396,16 @@ def nada_click():
         pant_cont.insert(0, num_actual)
         nruta=updruta()
         actualizar(nruta)
-        cvs_img.move(cuadradoselec, -848, -472)
+        cvs_img.move(cuadradoselec, -944, -518)
+        pant_cont["state"] = "disable"
     else:
         updcuadrado()
 
 def descartar_click():
     global contadorceldas
     contadorceldas=contadorceldas+1
-    if(contadorceldas>=25):
+    if(contadorceldas>=72):
+        pant_cont["state"] = "normal"
         contadorceldas=0
         num_actual=int(pant_cont.get())
         num_actual=num_actual+1
@@ -405,7 +413,8 @@ def descartar_click():
         pant_cont.insert(0, num_actual)
         nruta=updruta()
         actualizar(nruta)
-        cvs_img.move(cuadradoselec, -848, -472)
+        cvs_img.move(cuadradoselec, -944, -518)
+        pant_cont["state"] = "disable"
     else:
         updcuadrado()
 
@@ -488,6 +497,6 @@ btn_fuego=Button(text="Fuego", width=10, bg="orange", fg="white", command=fuego_
 btn_humo=Button(text="Humo", width=10, bg="gray", fg="white", command=humo_click).place(x=1150, y=390)
 btn_nada=Button(text="No fuego", bg="green", width=10, command=nada_click).place(x=1150, y=430)
 btn_nada=Button(text="Descartar", width=10, command=descartar_click).place(x=1150, y=470)
-btn_deshacer=Button(text="Deshacer", width=10, bg="#FF5733", command=deshacer).place(x=1150, y=510)
+btn_deshacer=Button(text="Deshacer", width=10, bg="#FF5733", command=deshacer, state='disabled').place(x=1150, y=510)
 
 raiz.mainloop()
